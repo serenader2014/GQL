@@ -4,6 +4,24 @@ var sinon  = require('sinon'),
 
     sandbox = sinon.sandbox.create();
 
+var resourceContext = {
+    posts: {
+        name: 'posts',
+        propAliases: {author: 'author.slug', tags: 'tags.slug', tag: 'tags.slug'},
+        relations: []
+    },
+    tags: {
+        name: 'tags',
+        propAliases: {},
+        relations: []
+    },
+    users: {
+        name: 'users',
+        propAliases: {role: 'roles.name'},
+        relations: []
+    }
+};
+
 describe('Knexify', function () {
     var postKnex, testKnex;
 
@@ -27,7 +45,7 @@ describe('Knexify', function () {
     it('should error for unknown context', function () {
         knexify(testKnex, {
             statements: []
-        });
+        }, resourceContext.test);
 
         testKnex.toSQL.should.throwError();
     });
@@ -35,7 +53,7 @@ describe('Knexify', function () {
     it('should correctly build an empty query', function () {
         knexify(postKnex, {
             statements: []
-        });
+        }, resourceContext.posts);
 
         // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
         postKnex.toSQL().should.eql({
@@ -61,7 +79,7 @@ describe('Knexify', function () {
             statements: [
                 {prop: 'id', op: '=', value: 5}
             ]
-        });
+        }, resourceContext.posts);
 
         // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
         postKnex.toSQL().should.eql({
@@ -89,7 +107,7 @@ describe('Knexify', function () {
                 {prop: 'id', op: '=', value: 5},
                 {prop: 'slug', op: '=', value: 'welcome-to-ghost', func: 'and'}
             ]
-        });
+        }, resourceContext.posts);
 
         // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
         postKnex.toSQL().should.eql({
@@ -119,7 +137,7 @@ describe('Knexify', function () {
                 {prop: 'id', op: '=', value: 5},
                 {prop: 'slug', op: '=', value: 'welcome-to-ghost', func: 'or'}
             ]
-        });
+        }, resourceContext.posts);
 
         // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
         postKnex.toSQL().should.eql({
@@ -150,7 +168,7 @@ describe('Knexify', function () {
                 statements: [
                     {prop: 'image', op: 'IS', value: null}
                 ]
-            });
+            }, resourceContext.posts);
 
             // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
             postKnex.toSQL().should.eql({
@@ -179,7 +197,7 @@ describe('Knexify', function () {
                 statements: [
                     {prop: 'image', op: 'IS NOT', value: null}
                 ]
-            });
+            }, resourceContext.posts);
 
             // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
             postKnex.toSQL().should.eql({
@@ -210,7 +228,7 @@ describe('Knexify', function () {
                     {prop: 'id', op: '=', value: 5},
                     {prop: 'image', op: 'IS', value: null, func: 'or'}
                 ]
-            });
+            }, resourceContext.posts);
 
             // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
             postKnex.toSQL().should.eql({
@@ -241,7 +259,7 @@ describe('Knexify', function () {
                     {prop: 'id', op: '=', value: 5},
                     {prop: 'image', op: 'IS NOT', value: null, func: 'or'}
                 ]
-            });
+            }, resourceContext.posts);
 
             // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
             postKnex.toSQL().should.eql({
@@ -279,7 +297,7 @@ describe('Knexify', function () {
                         ], func: 'and'
                     }
                 ]
-            });
+            }, resourceContext.posts);
 
             // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
             postKnex.toSQL().should.eql({
@@ -315,7 +333,7 @@ describe('Knexify', function () {
                         ], func: 'and'
                     }
                 ]
-            });
+            }, resourceContext.posts);
 
             // Check the output from both toSQL and toQuery - this emulates calling the query twice for pagination
             postKnex.toSQL().should.eql({

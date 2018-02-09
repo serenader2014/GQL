@@ -2,9 +2,28 @@ var gql = require('../lib/gql'),
     knex = require('knex')({}),
     toSQL;
 
+var resourceContext = {
+    posts: {
+        name: 'posts',
+        propAliases: {author: 'author.slug', tags: 'tags.slug', tag: 'tags.slug'},
+        relations: []
+    },
+    tags: {
+        name: 'tags',
+        propAliases: {},
+        relations: []
+    },
+    users: {
+        name: 'users',
+        propAliases: {role: 'roles.name'},
+        relations: []
+    }
+};
+
 toSQL = exports.toSQL = function (input, resource) {
     var parsedFilter = gql.parse(input);
-    return gql.knexify(knex(resource), parsedFilter).toQuery();
+    var qb = knex(resource)
+    return gql.knexify(qb, parsedFilter, resourceContext[qb._single.table]).toQuery();
 };
 
 describe('GQL', function () {
